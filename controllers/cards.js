@@ -1,7 +1,6 @@
 const Cards = require('../models/card');
 const { DataError, NotFoundError, serverError } = require('../errors');
 
-
 module.exports.getInitialCards = (req, res) => {
   Cards.find({})
     .then((cards) => res.send({ data: cards }))
@@ -65,7 +64,6 @@ module.exports.deleteCards = (req, res) => {
     });
 };
 
-
 module.exports.like = (req, res) => {
   const { _id } = req.user;
   Cards.findByIdAndUpdate(
@@ -94,7 +92,6 @@ module.exports.like = (req, res) => {
     });
 };
 
-
 module.exports.dislike = (req, res) => {
   const { _id } = req.user;
   Cards.findByIdAndUpdate(
@@ -122,4 +119,3 @@ module.exports.dislike = (req, res) => {
       }
     });
 };
-

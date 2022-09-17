@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const { DataError, NotFoundError, serverError } = require('../errors');
 
-
 module.exports.getUserInfo = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -45,7 +44,6 @@ module.exports.getUserId = (req, res) => {
     });
 };
 
-
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
@@ -64,7 +62,6 @@ module.exports.createUser = (req, res) => {
       }
     });
 };
-
 
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
