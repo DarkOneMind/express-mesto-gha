@@ -4,33 +4,22 @@ const { DataError, NotFoundError, serverError } = require('../errors');
 module.exports.getInitialCards = (req, res) => {
   Cards.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        res.status(DataError).send({
-          message: 'Переданы некорректные данные при получении карточки',
-        });
-      } else {
-        res
-          .status(serverError)
-          .send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(() => res.status(serverError).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.addCard = (req, res) => {
-  const { name, link, likes } = req.body;
+  const { name, link } = req.body;
   const { _id } = req.user;
   Cards.create({
     name,
     link,
-    likes,
     owner: _id,
   })
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(DataError).send({
-          message: 'Переданы некорректные данные при создании карточки',
+          message: 'Некорректный id',
         });
       } else {
         res
@@ -43,18 +32,16 @@ module.exports.addCard = (req, res) => {
 module.exports.deleteCards = (req, res) => {
   const { cardId } = req.params;
   Cards.findOneAndRemove({ _id: cardId })
-    .orFail(() => {
-      throw new Error('Карточка с указанным _id не найдена');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'CastError') {
         res
           .status(DataError)
-          .send({ message: 'Карточка с указанным _id не найдена' });
+          .send({ message: 'Некорректный id' });
       } else if (error.name === 'Error') {
         res.status(NotFoundError).send({
-          message: 'Переданы некорректные данные для постановки лайка',
+          message: 'Данных нет',
         });
       } else {
         res
@@ -71,18 +58,16 @@ module.exports.like = (req, res) => {
     { $addToSet: { likes: _id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('Карточка не найдена');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'CastError') {
         res
           .status(DataError)
-          .send({ message: 'Переданы некорректные данные для постановки лайка' });
+          .send({ message: 'Некорректный id' });
       } else if (error.name === 'Error') {
         res.status(NotFoundError).send({
-          message: 'Переданы некорректные данные для постановки лайка',
+          message: 'Данных нет',
         });
       } else {
         res
@@ -99,18 +84,16 @@ module.exports.dislike = (req, res) => {
     { $pull: { likes: _id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('Карточка не найдена');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((card) => res.send({ data: card }))
     .catch((error) => {
       if (error.name === 'CastError') {
         res
           .status(DataError)
-          .send({ message: 'Передан несуществующий _id карточки' });
+          .send({ message: 'Некорректный id' });
       } else if (error.name === 'Error') {
         res.status(NotFoundError).send({
-          message: 'Переданы некорректные данные для снятия лайка',
+          message: 'Данных нет',
         });
       } else {
         res

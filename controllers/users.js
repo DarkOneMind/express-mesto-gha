@@ -5,7 +5,7 @@ module.exports.getUserInfo = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name) {
         res
           .status(DataError)
           .send({
@@ -21,9 +21,7 @@ module.exports.getUserInfo = (req, res) => {
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.id)
-    .orFail(() => {
-      throw new Error('Пользователь по указанному _id не найден');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -71,9 +69,7 @@ module.exports.updateUserInfo = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new Error('Пользователь не найден');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'Error') {
@@ -98,9 +94,7 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const { _id } = req.user;
   User.findOneAndUpdate({ _id }, { avatar }, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new Error('Пользователь не найден');
-    })
+    .orFail(() => new Error('NotFound'))
     .then((user) => res.send({ data: user }))
     .catch((error) => {
       if (error.name === 'Error') {
