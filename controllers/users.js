@@ -9,7 +9,7 @@ module.exports.getUserInfo = (req, res) => {
         res
           .status(DataError)
           .send({
-            message: 'Переданы некорректные данные при создании пользователя',
+            message: 'Некорректный id',
           });
       } else {
         res
@@ -28,7 +28,7 @@ module.exports.getUserId = (req, res) => {
         res
           .status(DataError)
           .send({
-            message: 'Переданы некорректные данные для получения пользователя',
+            message: 'Некорректный id',
           });
       } else if (error.name === 'Error') {
         res
@@ -51,7 +51,7 @@ module.exports.createUser = (req, res) => {
         res
           .status(DataError)
           .send({
-            message: 'Переданы некорректные данные при создании пользователя',
+            message: 'Некорректный id',
           });
       } else {
         res
@@ -105,7 +105,7 @@ module.exports.updateAvatar = (req, res) => {
         res
           .status(DataError)
           .send({
-            message: 'Переданы некорректные данные при обновлении аватара',
+            message: 'Некорректный id',
           });
       } else {
         res
