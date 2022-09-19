@@ -4,19 +4,7 @@ const { DataError, NotFoundError, serverError } = require('../errors');
 module.exports.getUserInfo = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((error) => {
-      if (error.name) {
-        res
-          .status(DataError)
-          .send({
-            message: 'Некорректный id',
-          });
-      } else {
-        res
-          .status(serverError)
-          .send({ message: 'На сервере произошла ошибка' });
-      }
-    });
+    .catch(() => res.status(serverError).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.getUserId = (req, res) => {
@@ -30,7 +18,7 @@ module.exports.getUserId = (req, res) => {
           .send({
             message: 'Некорректный id',
           });
-      } else if (error.name === 'Error') {
+      } else if (error.message === 'NotFound') {
         res
           .status(NotFoundError)
           .send({ message: 'Пользователь по указанному _id не найден' });
